@@ -2,7 +2,6 @@ import email
 from json import tool
 from tokenize import group
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 from tools.private_data import ACCESS_GROUPS_NAME
 
 
@@ -17,3 +16,8 @@ class User(models.Model):
     @property
     def is_staff(self):
         return self.group < 0
+
+
+class Patient(User):
+    adivisor = models.ForeignKey('User', related_name='adivisor_fk', on_delete=models.PROTECT)
+    guardian = models.ForeignKey('User', related_name='guardian_fk', on_delete=models.PROTECT)
