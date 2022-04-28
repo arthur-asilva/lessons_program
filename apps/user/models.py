@@ -7,7 +7,7 @@ from tools.private_data import ACCESS_GROUPS_NAME
 
 class User(models.Model):
     name = models.CharField(max_length=254)
-    email = models.CharField(max_length=254)
+    email = models.CharField(max_length=254, unique=True)
     password = models.CharField(max_length=10)
     group = models.IntegerField(choices=[(key, value) for key, value in ACCESS_GROUPS_NAME.items()])
     status = models.BooleanField(default=True, null=True, blank=True)
