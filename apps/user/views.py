@@ -14,4 +14,4 @@ def user_login(request):
             user = user[0]
             request.session['auth_session'] = {'user': user.id, 'name': user.name, 'group': user.group}
 
-    return render(request, 'sign-in.html')
+    return render(request, 'user/sign-in.html')
