@@ -7,6 +7,7 @@ from apps.user.models import User
 
 class Subject(models.Model):
     subject = models.CharField(max_length=254)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
     def __str__(self):
         return self.subject
 
@@ -27,9 +28,6 @@ class Lesson(models.Model):
     @property
     def boosts(self):
         return self.boosts.split(';')
-
-    def __str__(self):
-        return self.boosts
 
 
 
