@@ -20,7 +20,6 @@ def user_login(request):
 
 
 
-
 def user_redirect(group):
     
     if group != 1:
@@ -30,7 +29,12 @@ def user_redirect(group):
 
 
 
-
 def user_logout(request):
     del request.session['auth_session']
     return redirect('../')
+
+
+
+def get_user_from_request(request):
+    user = User.objects.get(id=request.session['auth_session']['user'])
+    return user

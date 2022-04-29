@@ -12,7 +12,7 @@ def lessons_dashboard(request):
     
     data = {
         'patient': patient,
-        'programs': Lesson.objects.values('subject__subject', 'subject__description').order_by('-id')[:3]
+        'programs': Lesson.objects.values('subject__subject', 'subject__description', 'subject__id').order_by('-id')[:3]
     }
 
     return render(request, 'lessons/lessons.html', data)
@@ -25,7 +25,8 @@ def lessons_add_subject(request):
         subject = Subject()
         subject.subject = request.POST['name']
         subject.description = request.POST['description']
-        # subject.user = 
+        subject.user = User.objects.get(id=request.session['auth_session']['user'])
+        subject.save()
 
     data = {
         'programs': Subject.objects.order_by('-id')[:6]
