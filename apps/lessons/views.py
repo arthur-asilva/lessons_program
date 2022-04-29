@@ -25,7 +25,8 @@ def lessons_add_subject(request):
         subject = Subject()
         subject.subject = request.POST['name']
         subject.description = request.POST['description']
-        # subject.user = 
+        subject.user = User.objects.get(id=request.session['auth_session']['user'])
+        subject.save()
 
     data = {
         'programs': Subject.objects.order_by('-id')[:6]
