@@ -2,12 +2,13 @@ from django.shortcuts import render
 from apps.user.models import User, Patient
 from apps.lessons.models import Lesson, Subject
 from apps.user.auth import access_auth
+from apps.user.views import get_user_from_request
 
 
 @access_auth
 def lessons_dashboard(request):
     
-    user = User.objects.get(id=request.session['auth_session']['user'])
+    user = get_user_from_request(request)
     patient = Patient.objects.get(adivisor=user)
     
     data = {
@@ -25,7 +26,7 @@ def lessons_add_subject(request):
         subject = Subject()
         subject.subject = request.POST['name']
         subject.description = request.POST['description']
-        subject.user = User.objects.get(id=request.session['auth_session']['user'])
+        subject.user = get_user_from_request(request)
         subject.save()
 
     data = {
