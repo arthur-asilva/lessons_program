@@ -14,8 +14,10 @@ def lessons_dashboard(request):
     
     data = {
         'patient': patient,
-        'programs': Lesson.objects.values('subject__subject', 'subject__description', 'subject__id', 'subject__creation_date').order_by('-id')[:3]
+        'programs': Lesson.objects.order_by('subject').distinct('subject').reverse()[:3]
     }
+
+    print(data['programs'])
 
     return render(request, 'lessons/lessons.html', data)
 
