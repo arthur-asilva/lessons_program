@@ -23,14 +23,16 @@ class Lesson(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.PROTECT)
     lesson_date = models.DateField()
     boosts = models.CharField(max_length=254)
+    description = models.CharField(max_length=254, blank=True, null=True)
     is_active = models.BooleanField(default=False, blank=True, null=True)
     is_finish = models.BooleanField(default=False, blank=True, null=True)
     finish_date = models.DateField(blank=True, null=True)
     creation_date = models.DateField(blank=True, null=True, auto_now_add=True)
 
     @property
-    def boosts(self):
-        return self.boosts.split(';')
+    def boosts_list_label(self):
+        like_list = self.boosts.split(';')
+        return ', '.join(like_list)
 
 
 

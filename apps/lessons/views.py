@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from curses.ascii import US
+from django.shortcuts import redirect, render
 from apps.user.models import User, Patient
 from apps.lessons.models import Lesson, Subject
 from apps.user.auth import access_auth
@@ -19,6 +20,9 @@ def lessons_dashboard(request):
     return render(request, 'lessons/lessons.html', data)
 
 
+
+
+
 @access_auth
 def lessons_add_subject(request):
 
@@ -34,3 +38,29 @@ def lessons_add_subject(request):
     }
 
     return render(request, 'lessons/add-subject.html', data)
+
+
+
+
+@access_auth
+def lessons_add_lesson(request, slug):
+
+    subject = Subject.objects.get(id=slug)
+
+    if request.method == 'POST':
+        lesson = Lesson()
+        lesson.user = User.objects.get(id=request.POST['patient'])
+        lesson.boosts = ';'.join(request.POST.getlist('boost'))
+        lesson.subject = subject
+        lesson.lesson_date = request.POST['lesson_date']
+        lesson.description = request.POST['description']
+        lesson.save()
+        return redirect('../../lessons')
+
+    data = {
+        'lessons': Lesson.objects.filter(subject__id=slug).order_by('-id'),
+        'subject': subject,
+        'users': User.objects.filter(group=1)
+    }
+
+    return render(request, 'lessons/add-lesson.html', data)
