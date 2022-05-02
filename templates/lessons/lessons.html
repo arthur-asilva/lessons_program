@@ -76,14 +76,14 @@
                     </div>
                     <div class="card-body px-1 pb-0">
                       
-                      <a href="{% url 'lessons:add_lesson' slug=program.subject__id %}">
-                        <h5>{{program.subject__subject}}</h5>
+                      <a href="{% url 'lessons:add_lesson' slug=program.subject.id %}">
+                        <h5>{{program.subject.subject}}</h5>
                       </a>
                       <p class="mb-4 text-sm">
-                        {{program.subject__description}}
+                        {{program.subject.description}}
                       </p>
                       <p class="mb-4 text-sm" style="text-align: right;">
-                        Criado em: <b>{{program.subject__creation_date|date:"d/M/Y"}}</b>
+                        Criado em: <b>{{program.subject.creation_date|date:"d/M/Y"}}</b>
                       </p>
                     </div>
                   </div>
