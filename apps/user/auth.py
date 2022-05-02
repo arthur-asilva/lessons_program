@@ -8,10 +8,9 @@ def access_auth(function):
         
         if session is not None:
             if session['group'] == 1:
-                print('group: 1')
-                return redirect('http://localhost:8000/')
+                # return redirect('http://localhost:8000/')
+                pass
         else:
-            print('session: none')
             return redirect('http://localhost:8000/')
 
         return function(request, *args, **kwargs)

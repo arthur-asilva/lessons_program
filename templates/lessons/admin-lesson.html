@@ -1,0 +1,62 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block content %}
+
+    
+    <div class="row play-container mt-6">
+
+        <h6 class="mb-6">
+            Estímulo nº {{choice_control.count}}
+            <p class="mb-0 text-sm">
+                Escolha a alternativa correta para o estímulo atual.
+            </p>
+        </h6>
+        
+        <form method="post">
+
+            {% csrf_token %}
+            <div class="play-content d-flex justify-content-around mb-6">
+                {% for option in options %}
+                    {% if current_choice.correct_answer is None %}
+                        <a href="{% url 'lessons:setchoice' slug=lesson.id %}?choice={{option}}" 
+                            class="col-{{coll_width}} btn {% if current_choice.correct_answer == option %}bg-gradient-info{% endif %}">{{option}}</a>
+                    {% else %}
+                        <a href="#" class="col-{{coll_width}} btn {% if current_choice.correct_answer == option %}bg-gradient-info{% endif %}">{{option}}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if current_choice.correct_answer is not None %}
+                <div class="row">
+                    <div class="col-4">
+                        <label>Ajuda física</label>
+                        <div class="mb-3">
+                            <select required class="form-control" name="physical_help">
+                                <option value="AF">Ajuda física total</option>
+                                <option value="AL">Ajuda física parcial</option>
+                                <option value="AG">Ajuda gestual</option>
+                                <option value="I">Independente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label>Ajuda verbal</label>
+                        <div class="mb-3">
+                            <select required class="form-control" name="verbal_help">
+                                <option value="AE">Ajuda ecóica</option>
+                                <option value="IV">Intraverbal</option>
+                                <option value="I">Independente</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <button class="btn bg-gradient-info mt-3">Conferir</button>
+
+        </form>
+
+    </div>
+
+{% endblock %}

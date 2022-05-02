@@ -1,0 +1,73 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png' %}">
+        <link rel="icon" type="image/png" href="../assets/img/favicon.png' %}">
+        <title>
+            Sistema de acompanhamento | Play
+        </title>
+        <!--     Fonts and icons     -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+
+        <!-- CSS Files -->
+        <link id="pagestyle" href="{% static 'assets/css/soft-ui-dashboard.css' %}" rel="stylesheet" />
+        
+        <style>
+            .play-container{
+                margin: 0;
+                position: absolute;
+                top: 50%;
+                -ms-transform: translateY(-50%);
+                transform: translateY(-50%);
+                width: 100%;
+            }
+            .play-content{
+                align-items: center;
+            }
+            .item{
+                display: inline-block;
+                line-height: 230px;
+                padding: 10px;
+                max-width: 250px;
+                max-height: 250px;
+                background: #fff;
+                border-radius: 20px;
+                font-size: 30px;
+                font-weight: bold;
+                -webkit-box-shadow: 8px 15px 38px -2px rgba(0,0,0,0.2); 
+                box-shadow: 8px 15px 38px -2px rgba(0,0,0,0.2);
+            }
+        </style>
+
+    </head>
+
+
+    <body class="g-sidenav-show bg-gray-100">
+        
+        <div class="row play-container text-center">
+            <div class="play-content d-flex justify-content-around">
+                <div class="col-3 item">a</div>
+                <div class="col-3 item">b</div>
+                <div class="col-3 item">c</div>
+            </div>
+        </div>
+
+    </body>
+
+    <!--   Core JS Files   -->
+    <src="{% static 'assets/js/core/popper.min.js' %}"></script>
+    <src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
+
+    <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+    <src="{% static 'assets/js/soft-ui-dashboard.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function(){  
+            
+        });
+    </script>
+</html>
