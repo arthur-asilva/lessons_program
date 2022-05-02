@@ -1,7 +1,7 @@
-from curses.ascii import US
+import math
 from django.shortcuts import redirect, render
 from apps.user.models import User, Patient
-from apps.lessons.models import Lesson, Subject
+from apps.lessons.models import Lesson, SetChoice, Subject
 from apps.user.auth import access_auth
 from apps.user.views import get_user_from_request
 
@@ -16,8 +16,6 @@ def lessons_dashboard(request):
         'patient': patient,
         'programs': Lesson.objects.order_by('subject').distinct('subject').reverse()[:3]
     }
-
-    print(data['programs'])
 
     return render(request, 'lessons/lessons.html', data)
 
@@ -66,3 +64,52 @@ def lessons_add_lesson(request, slug):
     }
 
     return render(request, 'lessons/add-lesson.html', data)
+
+
+
+
+@access_auth
+def lessons_play(request, slug):
+    return render(request, 'lessons/play-lesson.html')
+
+
+
+
+
+@access_auth
+def lessons_game_admin(request, slug):
+    lesson = Lesson.objects.get(id=slug)
+    choice_control = SetChoice.objects.filter(lesson=lesson)
+    current_choice = choice_control.last()
+
+    if not lesson.is_active:
+        lesson.is_active = True
+        lesson.save()
+
+    data = {
+        'lesson': lesson,
+        'options': lesson.boosts.split(';'),
+        'choice_control': choice_control,
+        'current_choice': current_choice,
+        'coll_width': int(math.floor(12 / len(lesson.boosts.split(';')))) - 1,
+    }
+
+    return render(request, 'lessons/admin-lesson.html', data)
+
+
+
+
+
+@access_auth
+def lessons_setchoice(request, slug):
+    lesson = Lesson.objects.get(id=slug)
+    choice_control = SetChoice.objects.filter(lesson=lesson)
+
+    setchoice = SetChoice()
+    setchoice.lesson = lesson
+    setchoice.user = lesson.user
+    setchoice.sequence_number = choice_control.count()
+    setchoice.correct_answer = request.GET['choice']
+    setchoice.save()
+
+    return redirect(f"http://localhost:8000/lessons/{slug}/adminlessongame")
