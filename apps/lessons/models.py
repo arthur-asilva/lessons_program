@@ -42,9 +42,14 @@ class SetChoice(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     lesson = models.ForeignKey(Lesson, on_delete=models.PROTECT)
     sequence_number = models.IntegerField()
-    choose = models.IntegerField()
+    correct_answer = models.CharField(max_length=254, blank=True, null=True)
+    chosen_answer = models.CharField(max_length=254, blank=True, null=True)
     physical_help = models.CharField(max_length=2, blank=True, null=True)
     verbal_help = models.CharField(max_length=2, blank=True, null=True)
-    answer_date = models.DateField()
+    answer_date = models.DateField(blank=True, null=True)
     is_right = models.BooleanField(default=False)
     creation_date = models.DateField(blank=True, null=True, auto_now_add=True)
+
+    @property
+    def is_right(self):
+        return self._chosen_answer == self._correct_answer

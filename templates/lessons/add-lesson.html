@@ -130,11 +130,16 @@
                   {% for lesson in lessons %}
                     <div class="timeline-block mb-3">
                       <span class="timeline-step" style="margin-left: -12.5px;">
-                        <i class="ni ni-book-bookmark text-success text-gradient"></i>
+                        <i class="ni ni-book-bookmark text-primary text-gradient"></i>
                       </span>
                       <div class="timeline-content">
                         <h6 class="text-dark text-sm font-weight-bold mb-0">{{lesson.boosts_list_label}}</h6>
-                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">Criado em: {{lesson.creation_date|date:"d/M/Y" }}</p>
+                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">
+                          <a href="{% url 'lessons:admin_lesson_game' slug=lesson.id %}">
+                            <i class="ni ni-button-play text-success text-gradient" style="margin-right: 10px;"></i>
+                          </a>
+                          Criado em: {{lesson.creation_date|date:"d/M/Y" }}
+                        </p>
                       </div>
                     </div>
                   {% endfor %}
