@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from apps.user.models import User
+from django.conf import settings
 
 def access_auth(function):
     
@@ -11,7 +12,7 @@ def access_auth(function):
                 # return redirect('http://localhost:8000/')
                 pass
         else:
-            return redirect('http://localhost:8000/')
+            return redirect(f"{settings.BASE_URL}/")
 
         return function(request, *args, **kwargs)
 
