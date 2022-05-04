@@ -1,9 +1,11 @@
 import math
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from apps.user.models import User, Patient
 from apps.lessons.models import Lesson, SetChoice, Subject
 from apps.user.auth import access_auth
 from apps.user.views import get_user_from_request
+from django.http import JsonResponse
 
 
 @access_auth
@@ -70,7 +72,35 @@ def lessons_add_lesson(request, slug):
 
 @access_auth
 def lessons_play(request, slug):
-    return render(request, 'lessons/play-lesson.html')
+
+    lesson = Lesson.objects.get(id=slug)
+    choice_control = SetChoice.objects.filter(lesson=lesson)
+    current_choice = choice_control.last()
+
+    data = {
+        'lesson': lesson,
+        'options': lesson.boosts.split(';'),
+        'choice_control': choice_control,
+        'current_choice': current_choice,
+        'coll_width': int(math.floor(12 / len(lesson.boosts.split(';')))) - 1,
+    }
+
+    return render(request, 'lessons/play-lesson.html', data)
+
+
+
+
+@access_auth
+def lessons_send_answer(request, slug):
+    lesson = Lesson.objects.get(id=slug)
+    choice_control = SetChoice.objects.filter(lesson=lesson)
+    current_choice = choice_control.last()
+
+    current_choice.chosen_answer = request.GET['choice']
+    current_choice.answer_date = timezone.now()
+    current_choice.save()
+
+    return redirect(f"http://localhost:8000/lessons/{slug}/playlesson")
 
 
 
@@ -85,6 +115,13 @@ def lessons_game_admin(request, slug):
     if not lesson.is_active:
         lesson.is_active = True
         lesson.save()
+
+    if request.method == 'POST':
+        current_choice.physical_help = request.POST['physical_help']
+        current_choice.verbal_help = request.POST['verbal_help']
+        current_choice.sequence_number = choice_control.count()
+        current_choice.save()
+        current_choice = SetChoice.objects.create(sequence_number=choice_control.count()+1, lesson=lesson, user=lesson.user)
 
     data = {
         'lesson': lesson,
@@ -105,11 +142,48 @@ def lessons_setchoice(request, slug):
     lesson = Lesson.objects.get(id=slug)
     choice_control = SetChoice.objects.filter(lesson=lesson)
 
-    setchoice = SetChoice()
-    setchoice.lesson = lesson
-    setchoice.user = lesson.user
-    setchoice.sequence_number = choice_control.count()
-    setchoice.correct_answer = request.GET['choice']
-    setchoice.save()
+    if choice_control.count() == 0:
+        setchoice = SetChoice()
+        setchoice.lesson = lesson
+        setchoice.user = lesson.user
+        setchoice.sequence_number = choice_control.count()
+        setchoice.correct_answer = request.GET['choice']
+        setchoice.save()
+    else:
+        setchoice = choice_control.last()
+        setchoice.correct_answer = request.GET['choice']
+        setchoice.save()
 
     return redirect(f"http://localhost:8000/lessons/{slug}/adminlessongame")
+
+
+
+
+
+@access_auth
+def lessons_is_next(request, slug):
+    lesson = Lesson.objects.get(id=slug)
+    choice_control = SetChoice.objects.filter(lesson=lesson, chosen_answer__isnull=True, correct_answer__isnull=False)
+    current_choice = choice_control.last()
+
+    data = {'is_next': choice_control.count() > 0}
+
+    if choice_control.count() > 0:
+        data['correct_answer'] = current_choice.correct_answer
+        data['current_choice'] = current_choice.id
+
+    return JsonResponse(data)
+
+
+
+
+
+@access_auth
+def lessons_is_chosen(request, slug):
+    lesson = Lesson.objects.get(id=slug)
+    choice_control = SetChoice.objects.filter(lesson=lesson)
+    current_choice = choice_control.last()
+    return JsonResponse({
+                            'is_chosen': current_choice.chosen_answer is not None,
+                            'chosen_answer': current_choice.chosen_answer
+                        })
