@@ -65,7 +65,7 @@
             
             if (Object.keys($('#btn-next')).length > 0){
                 var handle = setInterval(function(){
-                    $.post( "http://localhost:8000/lessons/{{lesson.id}}/is_chosen", {csrfmiddlewaretoken: token, slug: "{{lesson.id}}"}).done(function(data){
+                    $.post("{{base_url}}/lessons/{{lesson.id}}/is_chosen", {csrfmiddlewaretoken: token, slug: "{{lesson.id}}"}).done(function(data){
                         if(data.is_chosen){
                             $('#btn-next').removeAttr('disabled');
                             clearInterval(handle);
