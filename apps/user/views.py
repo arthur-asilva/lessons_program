@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import User
 from apps.lessons.models import Lesson
+from django.conf import settings
 
 
 
@@ -25,9 +26,9 @@ def user_login(request):
 def user_redirect(group, active=0):
     
     if group != 1:
-        return redirect('http://localhost:8000/lessons/')
+        return redirect(f"{settings.BASE_URL}/lessons/")
     else:
-        return redirect(f"http://localhost:8000/lessons/{active[0].id}/playlesson")
+        return redirect(f"{settings.BASE_URL}/lessons/{active[0].id}/playlesson")
 
 
 

@@ -6,6 +6,7 @@ from apps.lessons.models import Lesson, SetChoice, Subject
 from apps.user.auth import access_auth
 from apps.user.views import get_user_from_request
 from django.http import JsonResponse
+from django.conf import settings
 
 
 @access_auth
@@ -100,7 +101,7 @@ def lessons_send_answer(request, slug):
     current_choice.answer_date = timezone.now()
     current_choice.save()
 
-    return redirect(f"http://localhost:8000/lessons/{slug}/playlesson")
+    return redirect(f"{settings.BASE_URL}/lessons/{slug}/playlesson")
 
 
 
@@ -124,6 +125,7 @@ def lessons_game_admin(request, slug):
         current_choice = SetChoice.objects.create(sequence_number=choice_control.count()+1, lesson=lesson, user=lesson.user)
 
     data = {
+        'base_url': settings.BASE_URL,
         'lesson': lesson,
         'options': lesson.boosts.split(';'),
         'choice_control': choice_control,
@@ -154,7 +156,7 @@ def lessons_setchoice(request, slug):
         setchoice.correct_answer = request.GET['choice']
         setchoice.save()
 
-    return redirect(f"http://localhost:8000/lessons/{slug}/adminlessongame")
+    return redirect(f"{settings.BASE_URL}/lessons/{slug}/adminlessongame")
 
 
 
