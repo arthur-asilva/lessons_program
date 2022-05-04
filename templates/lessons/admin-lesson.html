@@ -20,9 +20,9 @@
                 {% for option in options %}
                     {% if current_choice.correct_answer is None %}
                         <a href="{% url 'lessons:setchoice' slug=lesson.id %}?choice={{option}}" 
-                            class="col-{{coll_width}} btn {% if current_choice.correct_answer == option %}bg-gradient-info{% endif %}">{{option}}</a>
+                            class="col-{{coll_width}} btn">{{option}}</a>
                     {% else %}
-                        <a href="#" class="col-{{coll_width}} btn {% if current_choice.correct_answer == option %}bg-gradient-info{% endif %}">{{option}}</a>
+                        <button disabled class="col-{{coll_width}} btn {% if current_choice.correct_answer == option %}bg-gradient-info{% endif %}">{{option}}</button>
                     {% endif %}
                 {% endfor %}
             </div>
@@ -51,12 +51,30 @@
                         </div>
                     </div>
                 </div>
-            {% endif %}
 
-            <button class="btn bg-gradient-info mt-3">Conferir</button>
+                <button type="submit" id="btn-next" disabled class="btn bg-gradient-info mt-3">Continuar</button>
+            {% endif %}
 
         </form>
 
     </div>
+    
+    <script>
+        $(document).ready(function(){
+            let token = $('input[type=hidden]').val();
+            
+            if (Object.keys($('#btn-next')).length > 0){
+                var handle = setInterval(function(){
+                    $.post( "http://localhost:8000/lessons/{{lesson.id}}/is_chosen", {csrfmiddlewaretoken: token, slug: "{{lesson.id}}"}).done(function(data){
+                        if(data.is_chosen){
+                            $('#btn-next').removeAttr('disabled');
+                            clearInterval(handle);
+                        }
+                    });
+                }, 1000);
+            }
+
+        });
+    </script>
 
 {% endblock %}

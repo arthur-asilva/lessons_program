@@ -12,10 +12,8 @@
         </title>
         <!--     Fonts and icons     -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-
         <!-- CSS Files -->
         <link id="pagestyle" href="{% static 'assets/css/soft-ui-dashboard.css' %}" rel="stylesheet" />
-        
         <style>
             .play-container{
                 margin: 0;
@@ -47,13 +45,17 @@
 
 
     <body class="g-sidenav-show bg-gray-100">
-        
+        {% csrf_token %}
         <div class="row play-container text-center">
-            <div class="play-content d-flex justify-content-around">
-                <div class="col-3 item">a</div>
-                <div class="col-3 item">b</div>
-                <div class="col-3 item">c</div>
-            </div>
+            
+            {% if current_choice.chosen_answer is None and current_choice.correct_answer is not None %}
+                <div class="play-content d-flex justify-content-around">
+                    {% for option in options %}
+                        <a href="{% url 'lessons:send_answer' slug=lesson.id %}?choice={{option}}" class="col-{{coll_width}} item">{{option}}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
         </div>
 
     </body>
@@ -64,10 +66,25 @@
 
     <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
     <src="{% static 'assets/js/soft-ui-dashboard.min.js' %}"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-        $(document).ready(function(){  
+        $(document).ready(function(){
+            let token = $('input[type=hidden]').val();
             
+            var handle = setInterval(function(){
+                $.post("http://localhost:8000/lessons/{{lesson.id}}/is_next", { csrfmiddlewaretoken: token, slug: "{{lesson.id}}" }).done(function( data ) {
+                    //console.log(data.current_choice);
+                    //console.log(data.is_next);
+                    if(data.is_next && localStorage.getItem('last_choice') != data.current_choice){
+                        localStorage.setItem('last_choice', data.current_choice);
+                        document.location.reload(true);
+                    }
+                    if(localStorage.getItem('last_choice') == data.current_choice){
+                        clearInterval(handle);
+                    }
+                });
+            }, 1000);
+
         });
     </script>
 </html>
