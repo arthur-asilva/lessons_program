@@ -138,6 +138,28 @@ def lessons_game_admin(request, slug):
 
 
 
+@access_auth
+def lessons_end_lesson(request, slug):
+    lesson = Lesson.objects.get(id=slug)
+    choice_control = SetChoice.objects.filter(lesson=lesson)
+    current_choice = choice_control.last()
+
+    if request.method == 'GET':
+        lesson.is_active = False
+        lesson.save()
+        if current_choice.chosen_answer is not None:
+            current_choice.physical_help = request.GET['ph']
+            current_choice.verbal_help = request.GET['vh']
+            current_choice.sequence_number = choice_control.count()
+            current_choice.save()
+        else:
+            SetChoice.objects.filter(id=current_choice.id).delete()
+
+    return redirect(f"{settings.BASE_URL}/lessons")
+
+
+
+
 
 @access_auth
 def lessons_setchoice(request, slug):
@@ -168,7 +190,7 @@ def lessons_is_next(request, slug):
     choice_control = SetChoice.objects.filter(lesson=lesson, chosen_answer__isnull=True, correct_answer__isnull=False)
     current_choice = choice_control.last()
 
-    data = {'is_next': choice_control.count() > 0}
+    data = {'is_next': choice_control.count() > 0, 'has_active': lesson.is_active}
 
     if choice_control.count() > 0:
         data['correct_answer'] = current_choice.correct_answer
