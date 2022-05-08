@@ -76,15 +76,18 @@ def lessons_play(request, slug):
 
     lesson = Lesson.objects.get(id=slug)
     choice_control = SetChoice.objects.filter(lesson=lesson)
-    current_choice = choice_control.last()
 
     data = {
+        'base_url': settings.BASE_URL,
         'lesson': lesson,
         'options': lesson.boosts.split(';'),
         'choice_control': choice_control,
-        'current_choice': current_choice,
         'coll_width': int(math.floor(12 / len(lesson.boosts.split(';')))) - 1,
     }
+
+    if choice_control.count() > 0:
+        current_choice = choice_control.last()
+        data['current_choice'] = current_choice
 
     return render(request, 'lessons/play-lesson.html', data)
 
