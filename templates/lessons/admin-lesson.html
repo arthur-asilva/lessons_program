@@ -3,6 +3,38 @@
 
 {% block content %}
 
+    <style>
+    .ui-modal{
+        position: absolute;
+        z-index: 999;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+        padding: 30px 40px 10px 40px;
+        color: #fff;
+        border: 1px solid #570444;
+        border-radius: 10px;
+        transition: all 0.5s ease;
+        opacity: 0;
+        display: none;
+    }
+    .ui-modal .buttons{
+        text-align: right;
+    }
+    </style>
+
+    <div id="modal" class="ui-modal bg-gradient-primary">
+        <strong>Finalizar programa</strong>
+        <p>A ação irá encerrar essa sessão para todos os usuários conectados a ela. Você realmente deseja continuar?</p>
+        <div class="buttons">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn bg-gradient-danger mt-3">Cancelar</button>
+                <button type="submit" class="btn bg-gradient-success mt-3">Continuar</button>
+            </div>
+        </div>
+    </div>
+
     
     <div class="row play-container mt-6">
 
@@ -28,8 +60,8 @@
             </div>
 
             {% if current_choice.correct_answer is not None %}
-                <div class="row">
-                    <div class="col-4">
+                <div class="row justify-content-right">
+                    <div class="col-5">
                         <label>Ajuda física</label>
                         <div class="mb-3">
                             <select required class="form-control" name="physical_help">
@@ -40,7 +72,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-5">
                         <label>Ajuda verbal</label>
                         <div class="mb-3">
                             <select required class="form-control" name="verbal_help">
@@ -51,8 +83,12 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="btn-group" role="group">
+                    <button type="button" id="btn-end" class="btn bg-gradient-danger mt-3">Conferir e finalizar</button>
+                    <button type="submit" id="btn-next" disabled class="btn bg-gradient-info mt-3">Conferir e continuar</button>
+                </div>
 
-                <button type="submit" id="btn-next" disabled class="btn bg-gradient-info mt-3">Continuar</button>
             {% endif %}
 
         </form>
@@ -60,8 +96,9 @@
     </div>
     
     <script>
+        let token = $('input[type=hidden]').val();
+
         $(document).ready(function(){
-            let token = $('input[type=hidden]').val();
             
             if (Object.keys($('#btn-next')).length > 0){
                 var handle = setInterval(function(){
@@ -74,7 +111,24 @@
                 }, 1000);
             }
 
+            $('#btn-end').click(function(){
+                $('#modal').css({'display': 'block'}).delay(800);
+                $('#modal').css({'opacity': 1});
+            });
+
+            $('#modal button:nth-last-child(2)').click(function(){$('#modal').css({'opacity': 0});});
+
+            $('#modal button:nth-last-child(1)').click(function(){
+                
+                verbal_help = $('select[name=verbal_help] option').filter(':selected').val();
+                physical_help = $('select[name=physical_help] option').filter(':selected').val();
+                url = "{{base_url}}{% url 'lessons:end_lesson' slug=lesson.id %}" + "?vh=" + verbal_help + "&ph=" + physical_help
+                window.location.href = url
+
+            });
+
         });
+    
     </script>
 
 {% endblock %}

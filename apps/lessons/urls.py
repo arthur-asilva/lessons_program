@@ -14,5 +14,6 @@ urlpatterns = [
         path('<slug:slug>/send_answer', views.lessons_send_answer, name='send_answer'),
         path('<slug:slug>/is_chosen', views.lessons_is_chosen, name='is_chosen'),
         path('<slug:slug>/is_next', views.lessons_is_next, name='is_next'),
+        path('<slug:slug>/end_lesson', views.lessons_end_lesson, name='end_lesson'),
     ])),
 ]
