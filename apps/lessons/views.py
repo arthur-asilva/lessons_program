@@ -72,6 +72,31 @@ def lessons_add_lesson(request, slug):
 
 
 @access_auth
+def lessons_waiting_lesson(request):
+    lesson = Lesson.objects.filter(is_active=True)
+    data = {'is_next': False}
+    if lesson.count() > 0:
+        data['is_next'] = True
+    
+    return render(request, 'lessons/waiting-room.html', data)
+
+
+
+
+@access_auth
+def lessons_return_active(request):
+    lesson = Lesson.objects.filter(is_active=True)
+    data = { 'is_active': lesson.exists(), 'lesson': None, 'base_url': settings.BASE_URL }
+    if lesson.exists():
+        data['lesson'] = lesson[0].id
+
+    return JsonResponse(data)
+
+
+
+
+
+@access_auth
 def lessons_play(request, slug):
 
     lesson = Lesson.objects.get(id=slug)
@@ -79,6 +104,7 @@ def lessons_play(request, slug):
     current_choice = choice_control.last()
 
     data = {
+        'base_url': settings.BASE_URL,
         'lesson': lesson,
         'options': lesson.boosts.split(';'),
         'choice_control': choice_control,
