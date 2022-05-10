@@ -72,15 +72,17 @@
             let token = $('input[type=hidden]').val();
             
             var handle = setInterval(function(){
-                $.post("http://localhost:8000/lessons/{{lesson.id}}/is_next", { csrfmiddlewaretoken: token, slug: "{{lesson.id}}" }).done(function( data ) {
-                    //console.log(data.current_choice);
-                    //console.log(data.is_next);
-                    if(data.is_next && localStorage.getItem('last_choice') != data.current_choice){
-                        localStorage.setItem('last_choice', data.current_choice);
-                        document.location.reload(true);
-                    }
-                    if(localStorage.getItem('last_choice') == data.current_choice){
-                        clearInterval(handle);
+                $.post("{{base_url}}/lessons/{{lesson.id}}/is_next", { csrfmiddlewaretoken: token, slug: "{{lesson.id}}" }).done(function( data ) {
+                    if(data.has_active){
+                        if(data.is_next && localStorage.getItem('last_choice') != data.current_choice){
+                            localStorage.setItem('last_choice', data.current_choice);
+                            document.location.reload(true);
+                        }
+                        if(localStorage.getItem('last_choice') == data.current_choice){
+                            clearInterval(handle);
+                        }
+                    } else {
+                        window.location.href = "{{base_url}}/lessons/waiting_room"
                     }
                 });
             }, 1000);

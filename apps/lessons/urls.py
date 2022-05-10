@@ -15,5 +15,7 @@ urlpatterns = [
         path('<slug:slug>/is_chosen', views.lessons_is_chosen, name='is_chosen'),
         path('<slug:slug>/is_next', views.lessons_is_next, name='is_next'),
         path('<slug:slug>/end_lesson', views.lessons_end_lesson, name='end_lesson'),
+        path('is_active', views.lessons_return_active, name='is_active'),
+        path('waiting_room', views.lessons_waiting_lesson, name='waiting_room'),
     ])),
 ]

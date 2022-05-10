@@ -1,0 +1,52 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sala de espera</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+</head>
+<style>
+    html, body{
+        font-family: 'Roboto', sans-serif;
+        background: #8ab4f8;
+    }
+    .waiting-room img{
+        width: 300px;
+        height: 300px;
+        background: #fff;
+        padding: 30px;
+        border-radius: 200px;
+        box-shadow: 10px 5px 50px 0px rgba(0, 0, 0, 0.35);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+</style>
+<body>
+    <div class="waiting-room">
+        {% csrf_token %}
+        <img src="{% static 'assets/img/monophy.gif' %}"/>
+    </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+        let token = $('input[type=hidden]').val();
+        
+        var handle = setInterval(function(){
+            $.post("{{base_url}}/lessons/is_active", { csrfmiddlewaretoken: token }).done(function( data ) {
+                if(data.is_active)
+                {
+                    clearInterval(handle);
+                    window.location.href = '{{base_url}}/lessons/' + data.lesson + '/playlesson';
+                }
+                
+            });
+        }, 1000);
+
+    });
+</script>
+</html>
