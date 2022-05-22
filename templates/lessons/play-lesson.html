@@ -70,7 +70,7 @@
     <script>
         $(document).ready(function(){
             let token = $('input[type=hidden]').val();
-            
+        
             var handle = setInterval(function(){
                 $.post("{{base_url}}/lessons/{{lesson.id}}/is_next", { csrfmiddlewaretoken: token, slug: "{{lesson.id}}" }).done(function( data ) {
                     if(data.has_active){
