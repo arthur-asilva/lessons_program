@@ -35,7 +35,7 @@
 <script>
     $(document).ready(function(){
         let token = $('input[type=hidden]').val();
-        
+        localStorage.setItem('last_choice', null)
         var handle = setInterval(function(){
             $.post("{{base_url}}/lessons/is_active", { csrfmiddlewaretoken: token }).done(function( data ) {
                 if(data.is_active)

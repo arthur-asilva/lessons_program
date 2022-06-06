@@ -95,7 +95,6 @@ def lessons_return_active(request):
 
 
 
-
 @access_auth
 def lessons_play(request, slug):
 
@@ -138,6 +137,11 @@ def lessons_game_admin(request, slug):
     lesson = Lesson.objects.get(id=slug)
     choice_control = SetChoice.objects.filter(lesson=lesson)
     current_choice = choice_control.last()
+
+    if choice_control.count() > 0:
+        if current_choice.chosen_answer is not None and current_choice.correct_answer is not None:
+            current_choice = SetChoice.objects.create(sequence_number=choice_control.count()+1, lesson=lesson, user=lesson.user)
+
 
     if not lesson.is_active:
         lesson.is_active = True

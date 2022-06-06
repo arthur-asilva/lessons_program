@@ -14,44 +14,32 @@
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
         <!-- CSS Files -->
         <link id="pagestyle" href="{% static 'assets/css/soft-ui-dashboard.css' %}" rel="stylesheet" />
-        <style>
-            .play-container{
-                margin: 0;
-                position: absolute;
-                top: 50%;
-                -ms-transform: translateY(-50%);
-                transform: translateY(-50%);
-                width: 100%;
-            }
-            .play-content{
-                align-items: center;
-            }
-            .item{
-                display: inline-block;
-                line-height: 230px;
-                padding: 10px;
-                max-width: 250px;
-                max-height: 250px;
-                background: #fff;
-                border-radius: 20px;
-                font-size: 30px;
-                font-weight: bold;
-                -webkit-box-shadow: 8px 15px 38px -2px rgba(0,0,0,0.2); 
-                box-shadow: 8px 15px 38px -2px rgba(0,0,0,0.2);
-            }
-        </style>
+        <link href="{% static 'assets/css/lesson-program.css' %}" rel="stylesheet" />
 
     </head>
 
 
     <body class="g-sidenav-show bg-gray-100">
-        {% csrf_token %}
-        <div class="row play-container text-center">
-            
+        
+        <audio src="{% static 'assets/sound/winning_sound.mp3' %}" type="audio/mpeg"></audio>
+        <div class="winner" style="visibility: visible">
+            <img class="user" id="user" src="{% static 'assets/img/lipe.jpeg' %}" />
+            <img class="shield" src="{% static 'assets/img/winner.gif' %}" />
+            <button class="btn_continue">continuar</button>
+        </div>
+        
+        <div class="row play-container text-center" style="display: none;">
+            {% csrf_token %}    
             {% if current_choice.chosen_answer is None and current_choice.correct_answer is not None %}
                 <div class="play-content d-flex justify-content-around">
+                    
                     {% for option in options %}
+                        
                         <a href="{% url 'lessons:send_answer' slug=lesson.id %}?choice={{option}}" class="col-{{coll_width}} item">{{option}}</a>
+                        
+                        <!--
+                            <button class="col-{{coll_width}} item">{{option}}</button>
+                        -->
                     {% endfor %}
                 </div>
             {% endif %}
@@ -68,11 +56,32 @@
     <src="{% static 'assets/js/soft-ui-dashboard.min.js' %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
+        
+        const audio = document.querySelector('audio');
+        const user_icon = document.getElementById('user');
+
+        showWinnerScreen();
+
+        function showWinnerScreen(){
+            //$('.winner').style.visibility = 'visible';
+            setTimeout(function(){
+                audio.play();
+            }, 200);
+    
+            setTimeout(function(){
+                user_icon.style.opacity = 1;
+                user_icon.style.animation = '2s winner_user_pulse_animation ease-in-out infinite';
+            }, 3000);
+        }
+
         $(document).ready(function(){
+
             let token = $('input[type=hidden]').val();
         
             var handle = setInterval(function(){
+                
                 $.post("{{base_url}}/lessons/{{lesson.id}}/is_next", { csrfmiddlewaretoken: token, slug: "{{lesson.id}}" }).done(function( data ) {
+                    //console.log(data);
                     if(data.has_active){
                         if(data.is_next && localStorage.getItem('last_choice') != data.current_choice){
                             localStorage.setItem('last_choice', data.current_choice);
