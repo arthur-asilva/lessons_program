@@ -85,7 +85,7 @@
                 </div>
                 
                 <div class="btn-group" role="group">
-                    <button type="button" id="btn-end" class="btn bg-gradient-danger mt-3">Conferir e finalizar</button>
+                    <button type="button" id="btn-end" disabled class="btn bg-gradient-danger mt-3">Conferir e finalizar</button>
                     <button type="submit" id="btn-next" disabled class="btn bg-gradient-info mt-3">Conferir e continuar</button>
                 </div>
 
@@ -105,6 +105,7 @@
                     $.post("{{base_url}}/lessons/{{lesson.id}}/is_chosen", {csrfmiddlewaretoken: token, slug: "{{lesson.id}}"}).done(function(data){
                         if(data.is_chosen){
                             $('#btn-next').removeAttr('disabled');
+                            $('#btn-end').removeAttr('disabled');
                             clearInterval(handle);
                         }
                     });
